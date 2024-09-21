@@ -1,0 +1,100 @@
+import org.junit.Test;
+import java.util.Scanner;
+import java.io.PrintStream;
+import static org.junit.Assert.*;
+
+public class FrontendDeveloperTests {
+
+    /**
+     * This test tests the function of the listVehiclesLowMilage method.
+     * This method should take input and then open up a list of vehicles.
+     **/
+@Test
+public void testListVehiclesLowMilage() {
+    BackendInterface backend = new Backend();
+
+    String input = "1\n";
+    TextUITester tester = new TextUITester(input);
+
+    FrontendInterface frontend = new FrontendInterface(backend, System.in);
+    frontend.startApp();
+
+    String output = tester.checkOutput();
+    assertTrue(output.contains("Vehicles with the lowest milage:"));
+    
+}
+
+    /**
+     * This test tests the listVehicleThreshold method. This method
+     * lists vehicles that are at or above the threshold given by the user
+     **/
+@Test
+public void testListVehicleThreshold() {
+    BackendInterface backend = new Backend();
+
+    String input = "2\nn900000\n";
+    TextUITester tester = new TextUITester(input);
+
+    FrontendInterface frontend = new FrontendInterface(backend, System.in);
+    frontend.startApp();
+
+    String output = tester.checkOutput();
+    assertTrue(output.contains("Vehicles with mileage at or above 900000:"));
+
+}
+
+    /**
+     * This tests the exitApp() method and makes sure a exit message is printed out
+     **/
+@Test
+public void testExitApp() {
+    BackendInterface backend = new Backend();
+
+    String input = "4\n";
+    TextUITester tester = new TextUITester(input);
+
+    FrontendInterface frontend = new FrontendInterface(backend, System.in);
+    frontend.startApp();
+
+    String output = tester.checkOutput();
+    assertTrue(output.contains("Closing the application"));
+
+}
+    
+
+    /**
+     * This tests the openApp() method and makes sure a welcome message is printed out
+     **/
+@Test
+public void testOpenApp() {
+    BackendInterface backend = new Backend();
+
+    TextUITester tester = new TextUITester();
+
+    FrontendInterface frontend = new FrontendInterface(backend, System.in);
+
+    frontend.startApp();
+
+    String output = tester.checkOutput();
+    assertTrue(output.contains("Welcome!"));
+}
+
+    /**
+     * This method tests the specifyFileData() which takes a file and loads the data off of it.
+     * This tests makes sure that there is a message about a file openeing.
+     **/
+@Test
+public void testSpecifyFileData() {
+    BackendInterface backend = new Backend();
+
+    TextUITester tester = new TextUITester();
+
+    FrontendInterface frontend = new FrontendInterface(backend, System.in);
+
+    frontend.startApp();
+
+    String output = tester.checkOutput();
+    assertTrue(output.contains("File opened"));
+}
+
+    }

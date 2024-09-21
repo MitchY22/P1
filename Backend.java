@@ -1,0 +1,95 @@
+import java.io.*;  
+import java.util.Scanner;
+import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+/**
+ * This class model the Car Data Accessor
+ * @author Sean
+ *
+ */
+public class Backend implements BackendInterface{
+	IterableMultiKeySortedCollectionInterface<Data> rbt = new IterableMultiKeyRBT<Data>();
+	@Override
+	public IterableMultiKeySortedCollectionInterface<Data> getCars() {
+		return this.rbt;
+	}
+
+	@Override
+	public void clearCars() {
+		this.rbt.clear();
+		
+	}
+	//Read a file to make it our cars
+	@Override
+	public void readFile(String filepath) throws IllegalArgumentException {
+		try { 
+			//Exception
+			File file = new File(filepath);
+			//If not a file
+			if (!file.exists() || !file.isFile()) {
+			    throw new IllegalArgumentException("Filepath given is not a path to file.");
+			}
+			//parsing a CSV file into Scanner class constructor  
+			Scanner sc = new Scanner(file); 
+			//We skip the headers
+			sc.nextLine();
+			while (sc.hasNextLine()){  
+				String[] carDetails = sc.nextLine().split(",");
+				//We will create a empty car class
+				BackendIndividual newCar = new BackendIndividual();
+				//Now we loop through the carDetails and update the car
+				double price = Double.parseDouble(carDetails[0]);
+				newCar.updatePrice(price);
+				newCar.updateBrand(carDetails[1]);
+				newCar.updateModel(carDetails[2]);
+				int year = Integer.parseInt(carDetails[3]);
+				newCar.updateYear(year);
+				newCar.updateTitleStatus(carDetails[4]);
+				double mileage = Double.parseDouble(carDetails[5]);
+				newCar.updateMileage(mileage);
+				newCar.updateColor(carDetails[6]);
+				newCar.updateTin(carDetails[7]);
+				this.rbt.insertSingleKey(newCar);
+			}
+			sc.close();  //closes the scanner 
+	    }catch (Exception e) { 
+	        e.printStackTrace();
+	    }
+	}
+
+	@Override
+	public List<BackendInterface.Data> getCarsAtAboveMileage(double mileage) {
+		//Loop through the car and find cars above minimum mileage
+		BackendIndividual compareTo = new BackendIndividual();
+		compareTo.updateMileage(mileage);
+		this.rbt.setIterationStartPoint(compareTo);
+		List<BackendInterface.Data> result = new ArrayList<BackendInterface.Data>();
+		for(BackendInterface.Data data: this.rbt){
+			result.add(data);
+		}
+		return result;
+	}
+
+	@Override
+	public List<BackendInterface.Data> getCarsWithMinumumMileage() throws Exception {
+		if(rbt.isEmpty()){
+			throw new Exception("The RBT is empty");
+		}
+		this.rbt.setIterationStartPoint(null);
+		//List
+		List<BackendInterface.Data> carMinimumMileage = new ArrayList<BackendInterface.Data>();
+		Iterator<BackendInterface.Data> rbtIterator = this.rbt.iterator();
+		BackendInterface.Data minimum = rbtIterator.next();
+		carMinimumMileage.add(minimum);
+		while(rbtIterator.hasNext()){
+			BackendInterface.Data next = rbtIterator.next();
+			//Break if it's not the left bottom value anymore
+			if(minimum.compareTo(next)!=0){
+				break;
+			}
+			carMinimumMileage.add(next);
+		}
+		return carMinimumMileage;
+	}
+}
